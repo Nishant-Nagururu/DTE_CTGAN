@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH --job-name=CTGAN
-#SBATCH --output=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp.out
-#SBATCH --error=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp.err
-#SBATCH --account=dream_team
-#SBATCH --qos=dream_team
+#SBATCH --output=../hpg_outputs/vasp.out
+#SBATCH --error=../hpg_outputs/vasp.err
+#SBATCH --account= 
+#SBATCH --qos= 
 #SBATCH --mail-type=END,FAIL
-#SBATCH --mail-user=nishant.nagururu@ufl.edu
+#SBATCH --mail-user= 
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -31,7 +31,7 @@ export XLA_FLAGS="--xla_gpu_cuda_data_dir=/apps/compilers/nvhpc/23.7/Linux_x86_6
 
 # Create and activate virtual environment using Python 3.8
 python3.8 -m venv .venv
-source /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/.venv/bin/activate
+source ../.venv/bin/activate
 
 # Upgrade pip
 pip install --upgrade pip
