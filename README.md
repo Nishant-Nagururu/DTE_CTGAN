@@ -22,7 +22,7 @@ Welcome to **CTGAN**, a repository that provides multiple generative model imple
 
 Once set up, the repository structure should look like this:
 
-
+```
 ├── .venv                  # Contains installed packages
 ├── hpg_outputs            # Contains script output
 │   ├── vasp.out           # Shows log output
@@ -55,8 +55,7 @@ Once set up, the repository structure should look like this:
 │   ├── evaluate/
 │   │   └── evaluate.py    # ImageEvaluation class for computing FID, LPIPS, and training a classification model
 ├── README.md              # This README file
-
-
+```
 ---
 
 ## Features
