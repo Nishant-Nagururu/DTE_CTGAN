@@ -1,4 +1,3 @@
-```markdown
 # CTGAN: A Collection of Generative Models for CT Image Synthesis
 
 Welcome to **CTGAN**, a repository that provides multiple generative model implementations for CT image synthesis, including **DCGAN**, **WGAN**, **VAE**, and **PGGAN**. This codebase includes:
@@ -13,12 +12,9 @@ Welcome to **CTGAN**, a repository that provides multiple generative model imple
 - [Features](#features)
 - [Installation & Requirements](#installation--requirements)
 - [Running the Code](#running-the-code)
-  - [Using the Slurm Script](#using-the-slurm-script)
-  - [Customizing the Parameters](#customizing-the-parameters)
 - [Key Arguments in `main.py`](#key-arguments-in-mainpy)
 - [How It Works](#how-it-works)
 - [Results & Evaluation](#results--evaluation)
-- [License](#license)
 
 ---
 
@@ -100,8 +96,6 @@ If you are running on an HPC, make sure to load the required modules (CUDA, Pyth
 ---
 
 ## Running the Code
-
-### Using the Slurm Script
 
 1. **Edit `run.sh`** to modify your job name, account, email, etc., if needed.
 2. In the root directory, submit the job:
