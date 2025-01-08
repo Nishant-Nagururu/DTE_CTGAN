@@ -175,10 +175,5 @@ Below are some essential flags you can pass:
 
 ---
 
-## License
 
-This project is provided under the terms specified by the contributors. Make sure to check with the original authors if you intend to use this for commercial applications.
-
----
-
-Thank you for using **CTGAN**! If you find this work helpful, please consider giving this repository a ⭐. If you have any issues or questions, feel free to open an issue or submit a pull request.
+Thank you for using **CTGAN**! If you find this work helpful, please consider giving this repository a ⭐. If you have any issues or questions, feel free to contact me at nishant.nagururu@ufl.edu
