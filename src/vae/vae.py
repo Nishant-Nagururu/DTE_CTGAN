@@ -32,53 +32,13 @@ class VAE(AbstractModel):
     
     def preprocess_data(self):
         """GAN-specific data preprocessing with modality consideration."""
-        base_path = self.base_path
-        if self.modality == "covid":
-            base_path += self.covid_data_path
-        else:
-            base_path += self.healthy_data_path
+        train_image_paths, test_image_paths = self.get_test_and_train_paths()
 
-        # List patient directories
-        patient_dirs = sorted([d for d in os.listdir(base_path) if 'Patient' in d])
-
-        # Determine training and testing directories based on the number of patients
-        total_patients = len(patient_dirs)
-        train_dirs_index = (total_patients * 3) // 4  # 75% for training
-        train_dirs = patient_dirs[:train_dirs_index]
-        test_dirs = patient_dirs[train_dirs_index:]
-
-        # List all image paths
-        train_image_paths = [
-            os.path.join(base_path, patient, image)
-            for patient in train_dirs
-            for image in os.listdir(os.path.join(base_path, patient))
-        ]
-
-        test_image_paths = [
-            os.path.join(base_path, patient, image)
-            for patient in test_dirs
-            for image in os.listdir(os.path.join(base_path, patient))
-        ]
-
-        # Remove any paths that do not end in .png
-        train_image_paths = [path for path in train_image_paths if path.endswith('.png')]
-        test_image_paths = [path for path in test_image_paths if path.endswith('.png')]
         avg_dimensions = self.image_size[:2]
 
-        # Function to load images and convert to vectors
-        def load_and_vectorize_images(image_paths, avg_dimensions):
-            images = []
-            for image_path in image_paths:
-                img = Image.open(image_path)
-                img = img.convert('L')
-                img_resized = img.resize(avg_dimensions)
-                img_vector = np.array(img_resized, dtype=np.float32)
-                images.append(img_vector)
-            return np.stack(images, axis=0)
-
         # Load and vectorize images
-        train_images = load_and_vectorize_images(train_image_paths, avg_dimensions)
-        test_images = load_and_vectorize_images(test_image_paths, avg_dimensions)
+        train_images = self.load_and_vectorize_images(train_image_paths, avg_dimensions)
+        test_images = self.load_and_vectorize_images(test_image_paths, avg_dimensions)
 
         train_images = train_images.reshape(train_images.shape[0], *self.image_size).astype("float32")
         train_images = train_images / 255.0

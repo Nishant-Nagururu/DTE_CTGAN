@@ -31,6 +31,35 @@ class AbstractModel(ABC):
         # Call preprocessing (this should be dataset-specific and implemented by subclasses)
         # self.train_data, self.test_data = self.preprocess_data()
 
+    def get_test_and_train_paths(self):
+        base_path = self.base_path
+        if self.modality == "covid":
+            base_path += self.covid_data_path
+        else:
+            base_path += self.healthy_data_path
+
+        all_image_paths = [os.path.join(base_path, image) for image in os.listdir(base_path)]
+
+        # Remove any paths that do not end in .png
+        all_image_paths = [path for path in all_image_paths if path.endswith('.png')]
+
+        # Split the image paths into training (first 75%) and testing (last 25%)
+        train_index = (len(all_image_paths) * 3) // 4
+        train_image_paths = all_image_paths[:train_index]
+        test_image_paths = all_image_paths[train_index:]
+
+        return train_image_paths, test_image_paths
+
+    def load_and_vectorize_images(image_paths, avg_dimensions, color = 'L'):
+        images = []
+        for image_path in image_paths:
+            img = Image.open(image_path)
+            img = img.convert(color)
+            img_resized = img.resize(avg_dimensions)
+            img_vector = np.array(img_resized, dtype=np.float32)
+            images.append(img_vector)
+        return np.stack(images, axis=0)
+
     @abstractmethod
     def preprocess_data(self):
         """Preprocess data."""
@@ -92,55 +121,13 @@ class GANModel(AbstractModel):
 
     def preprocess_data(self):
         """GAN-specific data preprocessing."""
-        base_path = self.base_path
-        if self.modality == "covid":
-            base_path += self.covid_data_path
-        else:
-            base_path += self.healthy_data_path
-        
-        print("PICTURE PATH", base_path)
+        train_image_paths, test_image_paths = self.get_test_and_train_paths()
 
-        # List patient directories
-        patient_dirs = sorted([d for d in os.listdir(base_path) if 'Patient' in d])
-        print("Patient dirs", patient_dirs)
-
-        train_dirs_index = (len(patient_dirs) * 3) // 4
-
-        # Select first 60 for training and next 20 for testing
-        train_dirs = patient_dirs[:train_dirs_index]
-        test_dirs = patient_dirs[train_dirs_index:]
-
-        print(train_dirs)
-        print(test_dirs)
-
-        # List all image paths
-        train_image_paths = [os.path.join(base_path, patient, image) 
-                            for patient in train_dirs 
-                            for image in os.listdir(os.path.join(base_path, patient))]
-
-        test_image_paths = [os.path.join(base_path, patient, image) 
-                            for patient in test_dirs 
-                            for image in os.listdir(os.path.join(base_path, patient))]
-
-        # Remove any paths that do not end in .png
-        train_image_paths = [path for path in train_image_paths if path.endswith('.png')]
-        test_image_paths = [path for path in test_image_paths if path.endswith('.png')]
         avg_dimensions = self.image_size[:2]
-
-        # Function to load images and convert to vectors
-        def load_and_vectorize_images(image_paths, avg_dimensions):
-            images = []
-            for image_path in image_paths:
-                img = Image.open(image_path)
-                img = img.convert('L')
-                img_resized = img.resize(avg_dimensions)
-                img_vector = np.array(img_resized, dtype=np.float32)
-                images.append(img_vector)
-            return np.stack(images, axis=0)
-
+        
         # Load and vectorize images
-        train_images = load_and_vectorize_images(train_image_paths, avg_dimensions)
-        test_images = load_and_vectorize_images(test_image_paths, avg_dimensions)
+        train_images = self.load_and_vectorize_images(train_image_paths, avg_dimensions)
+        test_images = self.load_and_vectorize_images(test_image_paths, avg_dimensions)
         
         train_images = train_images.reshape(train_images.shape[0], *self.image_size).astype("float32")
         train_images = (train_images - 127.5) / 127.5
@@ -151,6 +138,7 @@ class GANModel(AbstractModel):
         self.steps_per_epoch = len(train_images) // self.batch_size
         self.steps = self.steps_per_epoch * self.epochs
         self.evaluate_images_num = len(train_images) // 2
+        
         if len(train_images) == 0:
             raise ValueError("Training dataset is empty. Check your data paths and preprocessing.")
 

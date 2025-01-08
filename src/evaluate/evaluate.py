@@ -58,7 +58,7 @@ class ImageEvaluation:
         images = []
         for image_path in image_paths:
             img = Image.open(image_path)
-            img = img.convert('RGB')  # Changed from 'L' to 'RGB' to load RGB images
+            img = img.convert('RGB')
             img_resized = img.resize(avg_dimensions)
             img_vector = np.array(img_resized, dtype=np.float32)
             images.append(img_vector)
@@ -85,31 +85,16 @@ class ImageEvaluation:
 
     def load_real_images(self, base_path):
         """GAN-specific data preprocessing."""
-        # List patient directories
-        patient_dirs = sorted([d for d in os.listdir(base_path) if 'Patient' in d])
-        print("Patient dirs", patient_dirs)
-
-        train_dirs_index = (len(patient_dirs) * 3) // 4
-
-        # Select first 75% for training and next 25% for testing
-        train_dirs = patient_dirs[:train_dirs_index]
-        test_dirs = patient_dirs[train_dirs_index:]
-
-        print("Training directories:", train_dirs)
-        print("Testing directories:", test_dirs)
-
-        # List all image paths
-        train_image_paths = [os.path.join(base_path, patient, image) 
-                             for patient in train_dirs 
-                             for image in os.listdir(os.path.join(base_path, patient))]
-
-        test_image_paths = [os.path.join(base_path, patient, image) 
-                            for patient in test_dirs 
-                            for image in os.listdir(os.path.join(base_path, patient))]
+        all_image_paths = [os.path.join(base_path, image) for image in os.listdir(base_path)]
 
         # Remove any paths that do not end in .png
-        train_image_paths = [path for path in train_image_paths if path.endswith('.png')]
-        test_image_paths = [path for path in test_image_paths if path.endswith('.png')]
+        all_image_paths = [path for path in all_image_paths if path.endswith('.png')]
+
+        # Split the image paths into training (first 75%) and testing (last 25%)
+        train_index = (len(all_image_paths) * 3) // 4
+        train_image_paths = all_image_paths[:train_index]
+        test_image_paths = all_image_paths[train_index:]
+
         avg_dimensions = self.image_size[:2]
 
         # Load and vectorize images
@@ -167,29 +152,6 @@ class ImageEvaluation:
 
         return combined_artificial_images, combined_artificial_labels
 
-    # def build_model(self):
-    #     """Builds the ResNet50 model."""
-    #     base_model = ResNet50(
-    #         include_top=False,  # We will add our own classification layer
-    #         weights='imagenet',  # Use pretrained weights
-    #         input_shape=tuple(self.image_size)
-    #     )
-
-    #     # Add custom top layers for classification
-    #     x = base_model.output
-    #     x = GlobalAveragePooling2D()(x)
-    #     x = Dense(1024, activation='relu')(x)
-    #     predictions = Dense(2, activation='softmax')(x)  # 2 classes: Healthy and Covid
-
-    #     # Create the full model
-    #     model = Model(inputs=base_model.input, outputs=predictions)
-
-    #     model.compile(optimizer=Adam(learning_rate=0.001),
-    #                   loss='categorical_crossentropy',
-    #                   metrics=['accuracy'])
-
-    #     return model
-
     def build_model(self):
         base_model = ResNet50(
             include_top=False,
@@ -241,8 +203,6 @@ class ImageEvaluation:
     def preprocess_images_for_fid(self, images):
         # Convert images to float32
         images = tf.cast(images, tf.float32)
-        
-        # Removed grayscale-to-RGB conversion since images are already RGB
 
         # Resize images to 299x299 for InceptionV3
         images_resized = tf.image.resize(images, [299, 299])

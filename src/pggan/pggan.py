@@ -16,119 +16,6 @@ from PIL import Image
 import os
 from abstract.model import GANModel
 
-# @tf.keras.utils.register_keras_serializable()
-# class PixelNormalization(Layer):
-#     def __init__(self, **kwargs):
-#         super(PixelNormalization, self).__init__(**kwargs)
-
-#     def call(self, inputs):
-#         mean_square = tf.reduce_mean(tf.square(inputs), axis=-1, keepdims=True)
-#         l2 = tf.math.rsqrt(mean_square + 1.0e-8)
-#         normalized = inputs * l2
-#         return normalized
-
-#     def compute_output_shape(self, input_shape):
-#         return input_shape
-
-# # Calculate the average standard deviation of all features and spatial location.
-# # Concat after creating a constant feature map with the average standard deviation
-# @tf.keras.utils.register_keras_serializable()
-# class MinibatchStdev(Layer):
-#     def __init__(self, **kwargs):
-#         super(MinibatchStdev, self).__init__(**kwargs)
-    
-#     def call(self, inputs):
-#         mean = tf.reduce_mean(inputs, axis=0, keepdims=True)
-#         stddev = tf.sqrt(tf.reduce_mean(tf.square(inputs - mean), axis=0, keepdims=True) + 1e-8)
-#         average_stddev = tf.reduce_mean(stddev, keepdims=True)
-#         shape = tf.shape(inputs)
-#         minibatch_stddev = tf.tile(average_stddev, (shape[0], shape[1], shape[2], 1))
-#         combined = tf.concat([inputs, minibatch_stddev], axis=-1)
-        
-#         return combined
-    
-#     def compute_output_shape(self, input_shape):
-#         input_shape = list(input_shape)
-#         input_shape[-1] += 1
-#         return tuple(input_shape)
-
-# # Perform Weighted Sum
-# # Define alpha as backend.variable to update during training
-# @tf.keras.utils.register_keras_serializable()
-# class WeightedSum(Add):
-#     def __init__(self, alpha=0.0, **kwargs):
-#         super(WeightedSum, self).__init__(**kwargs)
-#         self.alpha = backend.variable(alpha, name='ws_alpha')
-    
-#     def _merge_function(self, inputs):
-#         assert (len(inputs) == 2)
-#         output = ((1.0 - self.alpha) * inputs[0] + (self.alpha * inputs[1]))
-#         return output
-
-# # Scale by the number of input parameters to be similar dynamic range  
-# # For details, refer to https://prateekvishnu.medium.com/xavier-and-he-normal-he-et-al-initialization-8e3d7a087528
-# # stddev = sqrt(2 / fan_in)
-# @tf.keras.utils.register_keras_serializable()
-# class WeightScaling(Layer):
-#     def __init__(self, shape, gain=np.sqrt(2), **kwargs):
-#         super(WeightScaling, self).__init__(**kwargs)
-#         shape = np.asarray(shape)
-#         shape = tf.constant(shape, dtype=tf.float32)
-#         fan_in = tf.math.reduce_prod(shape)
-#         self.wscale = gain * tf.math.rsqrt(fan_in)
-
-#     def call(self, inputs, **kwargs):
-#         inputs = tf.cast(inputs, tf.float32)
-#         return inputs * self.wscale
-
-#     def compute_output_shape(self, input_shape):
-#         return input_shape
-
-# def WeightScalingDense(x, filters, gain, use_pixelnorm=False, activate=None):
-#     init = RandomNormal(mean=0., stddev=1.)
-#     in_filters = backend.int_shape(x)[-1]
-#     x = layers.Dense(filters, use_bias=False, kernel_initializer=init, dtype='float32')(x)
-#     x = WeightScaling(shape=(in_filters), gain=gain)(x)
-#     x = Bias(input_shape=x.shape)(x)
-#     if activate=='LeakyReLU':
-#         x = layers.LeakyReLU(0.2)(x)
-#     elif activate=='tanh':
-#         x = layers.Activation('tanh')(x)
-    
-#     if use_pixelnorm:
-#         x = PixelNormalization()(x)
-#     return x
-
-# def WeightScalingConv(x, filters, kernel_size, gain, use_pixelnorm=False, activate=None, strides=(1,1)):
-#     init = RandomNormal(mean=0., stddev=1.)
-#     in_filters = backend.int_shape(x)[-1]
-#     x = layers.Conv2D(filters, kernel_size, strides=strides, use_bias=False, padding="same", kernel_initializer=init, dtype='float32')(x)
-#     x = WeightScaling(shape=(kernel_size[0], kernel_size[1], in_filters), gain=gain)(x)
-#     x = Bias(input_shape=x.shape)(x)
-#     if activate=='LeakyReLU':
-#         x = layers.LeakyReLU(0.2)(x)
-#     elif activate=='tanh':
-#         x = layers.Activation('tanh')(x)
-    
-#     if use_pixelnorm:
-#         x = PixelNormalization()(x)
-#     return x 
-
-# @tf.keras.utils.register_keras_serializable()
-# class Bias(Layer):
-#     def __init__(self, **kwargs):
-#         super(Bias, self).__init__(**kwargs)
-
-#     def build(self, input_shape):
-#         b_init = tf.zeros_initializer()
-#         self.bias = tf.Variable(initial_value = b_init(shape=(input_shape[-1],), dtype='float32'), trainable=True)  
-
-#     def call(self, inputs, **kwargs):
-#         return inputs + self.bias
-    
-#     def compute_output_shape(self, input_shape):
-#         return input_shape  
-
 @tf.keras.utils.register_keras_serializable()
 class PixelNormalization(Layer):
     def __init__(self, **kwargs):
@@ -145,7 +32,6 @@ class PixelNormalization(Layer):
 
     def get_config(self):
         config = super(PixelNormalization, self).get_config()
-        # No additional arguments to add
         return config
 
 @tf.keras.utils.register_keras_serializable()
@@ -169,7 +55,6 @@ class MinibatchStdev(Layer):
     
     def get_config(self):
         config = super(MinibatchStdev, self).get_config()
-        # No additional arguments to add
         return config
 
 @tf.keras.utils.register_keras_serializable()
@@ -185,7 +70,6 @@ class WeightedSum(Add):
 
     def get_config(self):
         config = super(WeightedSum, self).get_config()
-        # Serialize the alpha value
         config.update({
             'alpha': float(self.alpha.numpy()),
         })
@@ -241,7 +125,6 @@ class Bias(Layer):
 
     def get_config(self):
         config = super(Bias, self).get_config()
-        # No additional arguments to add
         return config
 
 def WeightScalingDense(x, filters, gain, use_pixelnorm=False, activate=None):
@@ -287,57 +170,27 @@ class PGGAN(GANModel):
 
     def preprocess_data(self):
         """GAN-specific data preprocessing."""
-        base_path = self.base_path + self.covid_data_path
+        train_image_paths, test_image_paths = self.get_test_and_train_paths()
 
-        # List patient directories
-        patient_dirs = sorted([d for d in os.listdir(base_path) if 'Patient' in d])
-
-        train_dirs_index = (len(patient_dirs) * 3) // 4
-
-        train_dirs = patient_dirs[:train_dirs_index]
-        test_dirs = patient_dirs[train_dirs_index:]
-
-        # List all image paths
-        train_image_paths = [os.path.join(base_path, patient, image) 
-                            for patient in train_dirs 
-                            for image in os.listdir(os.path.join(base_path, patient))]
-
-        test_image_paths = [os.path.join(base_path, patient, image) 
-                            for patient in test_dirs 
-                            for image in os.listdir(os.path.join(base_path, patient))]
-
-        # Remove any paths that do not end in .png
-        train_image_paths = [path for path in train_image_paths if path.endswith('.png')]
-        test_image_paths = [path for path in test_image_paths if path.endswith('.png')]
         curr_dimensions = (4*(2**self.n_depth), 4*(2**self.n_depth))
 
-        # Function to load images and convert to vectors
-        def load_and_vectorize_images(image_paths, avg_dimensions):
-            images = []
-            for image_path in image_paths:
-                img = Image.open(image_path)
-                img = img.convert('RGB')
-                img_resized = img.resize(avg_dimensions)
-                img_vector = np.array(img_resized, dtype=np.float32)
-                images.append(img_vector)
-            return np.stack(images, axis=0)
-
         # Load and vectorize images
-        train_images = load_and_vectorize_images(train_image_paths, curr_dimensions)
-        test_images = load_and_vectorize_images(test_image_paths, curr_dimensions)
+        train_images = self.load_and_vectorize_images(train_image_paths, curr_dimensions, 'RGB')
+        test_images = self.load_and_vectorize_images(test_image_paths, curr_dimensions, 'RGB')
         
         curr_dimensions = (4*(2**self.n_depth), 4*(2**self.n_depth), 3)
         train_images = train_images.reshape(train_images.shape[0], *curr_dimensions).astype("float32")
         train_images = (train_images - 127.5) / 127.5
-        # train_images = train_images / 255.0
 
         test_images = test_images.reshape(test_images.shape[0], *curr_dimensions).astype("float32")
         test_images = (test_images - 127.5) / 127.5
-        # test_images = test_images / 255.0
 
         self.steps_per_epoch = len(train_images) // self.batch_size
         self.steps = self.steps_per_epoch * self.epochs
         self.evaluate_images_num = len(train_images) // 2
+
+        if len(train_images) == 0:
+            raise ValueError("Training dataset is empty. Check your data paths and preprocessing.")
 
         return train_images, test_images
     
