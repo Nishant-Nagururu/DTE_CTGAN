@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=CTGAN
-#SBATCH --output=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp2.out
-#SBATCH --error=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp2.err
+#SBATCH --output=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp.out
+#SBATCH --error=/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/hpg_outputs/vasp.err
 #SBATCH --account=dream_team
 #SBATCH --qos=dream_team
 #SBATCH --mail-type=END,FAIL
@@ -13,27 +13,46 @@
 #SBATCH --distribution=cyclic:cyclic
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:a100:1
-#SBATCH --mem-per-gpu=100000
-#SBATCH --time=48:00:00
+#SBATCH --mem-per-gpu=250000
+#SBATCH --time=72:00:00
+
+# Change to your working directory
+cd /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY
+
+# Unload all modules
+module purge
 
 # Load required modules
-cd /blue/dream_team/CT_GAN_TEAM/CTGAN
-module unload
-module load cuda/11.4.3 nvhpc/23.7 openmpi/4.1.5 vasp/6.4.1 tensorflow
+module load cuda/11.4.3 nvhpc/23.7 openmpi/4.1.5 vasp/6.4.1
+module load python/3.8
+
+# Set the XLA_FLAGS environment variable (if needed)
 export XLA_FLAGS="--xla_gpu_cuda_data_dir=/apps/compilers/nvhpc/23.7/Linux_x86_64/23.7/cuda"
 
-# rm -rf /blue/dream_team/CT_GAN_TEAM/CTGAN/.venv
-python -m venv .venv
-source /blue/dream_team/CT_GAN_TEAM/CTGAN/.venv/bin/activate
+# Create and activate virtual environment using Python 3.8
+python3.8 -m venv .venv
+source /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/.venv/bin/activate
 
+# Upgrade pip
 pip install --upgrade pip
+pip uninstall -y tensorflow tensorflow-estimator
+# Install required packages with specific versions
+pip install torch torchvision
 pip install tensorflow
-pip install matplotlib pillow tensorflow_gan tensorflow_hub lpips
+pip install tensorflow-estimator
+pip install matplotlib pillow nbconvert jupyter tensorflow_gan tensorflow_hub lpips
 
-# # Verify the installation:
-python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+# Verify the installation
+pip list
+which python
+python3.8 -c "import tensorflow as tf; print(tf.__version__)"
+python3.8 -c "import tensorflow as tf; print(tf.estimator)"
 
-# python3 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=1000 --iteration_path="Iteration_6/" --model_path="dcgan/" --disc_extra_steps=1
-# python3 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=5000 --iteration_path="Iteration_8/" --model_path="wgan/" --bs=64 --disc_extra_steps=5
-# python3 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=150 --iteration_path="Iteration_5/" --model_path="vae/" --bs=64
-python3 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=50 --iteration_path="Iteration_7/" --model_path="pggan/" --bs=16 --disc_extra_steps=1 --latent=512
+# Verify the installation:
+python3.8 -c "import tensorflow as tf; print('TensorFlow version:', tf.__version__); print('Available GPUs:', tf.config.list_physical_devices('GPU'))"
+
+# Run your script
+python3.8 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=50 --iteration_path="Iteration_12/" --model_path="pggan/" --bs=16 --disc_extra_steps=1 --latent=512
+# python3.8 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=1000 --iteration_path="Iteration_11/" --model_path="dcgan/" --disc_extra_steps=1
+# python3.8 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=1500 --iteration_path="Iteration_11/" --model_path="wgan/" --bs=64 --disc_extra_steps=5 
+# python3.8 /blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/src/main.py --nE=150 --iteration_path="Iteration_11/" --model_path="vae/" --bs=64
