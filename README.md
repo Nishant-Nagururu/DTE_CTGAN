@@ -123,11 +123,11 @@ Below are some essential flags you can pass:
 | `--bs`              | `32`                                            | Batch size                                                           |
 | `--latent`          | `128`                                           | Latent dimension size for the generator                              |
 | `--num_img`         | `3`                                             | Number of images to generate during each callback                    |
-| `--base_path`       | `/blue/dream_team/CT_GAN_TEAM/CTGAN_FINAL_COPY/`| Base directory containing data and outputs                           |
+| `--base_path`       | `/blue/dream_team/CT_GAN_TEAM/DTE_CTGAN/`       | Base directory containing data and outputs                           |
 | `--iteration_path`  | `Iteration_1/`                                  | Subfolder path for iteration outputs                                 |
 | `--model_path`      | `wgan/`                                         | Chooses which model to use (`dcgan/`, `wgan/`, `vae/`, `pggan/`)     |
-| `--data_path`       | `Inputs/New_Data_CoV2/Covid/`                   | Path to the COVID dataset                                            |
-| `--healthy_data_path`| `Inputs/New_Data_CoV2/Healthy`                 | Path to the Healthy dataset                                          |
+| `--data_path`       | `Inputs/Covid/`                                 | Path to the COVID dataset                                            |
+| `--healthy_data_path`| `Inputs/Healthy/`                              | Path to the Healthy dataset                                          |
 | `--image_size`      | `256`                                           | Height/width of the input images (converted internally to `(256,256,channels)`) |
 | `--image_channels`  | `1`                                             | Number of image channels (1 for grayscale, 3 for RGB)                |
 | `--disc_extra_steps`| `3`                                             | Extra discriminator steps per training iteration (used in WGAN)      |
