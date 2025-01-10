@@ -53,8 +53,8 @@ python3.8 -c "import tensorflow as tf; print('TensorFlow version:', tf.__version
 
 cd src
 
-# Run your script
-# python3.8 main.py --nE=50 --iteration_path="Iteration_14/" --model_path="pggan/" --bs=8 --disc_extra_steps=1 --latent=512
+# Choose which models to run and customize as needed
+python3.8 main.py --nE=50 --iteration_path="Iteration_14/" --model_path="pggan/" --bs=8 --disc_extra_steps=1 --latent=512
 python3.8 main.py --nE=1000 --iteration_path="Iteration_12/" --model_path="dcgan/" --disc_extra_steps=1
 python3.8 main.py --nE=1500 --iteration_path="Iteration_12/" --model_path="wgan/" --bs=64 --disc_extra_steps=5 
 python3.8 main.py --nE=150 --iteration_path="Iteration_12/" --model_path="vae/" --bs=64
