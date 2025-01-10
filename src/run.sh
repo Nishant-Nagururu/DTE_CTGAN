@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=CTGAN
-#SBATCH --output=../hpg_outputs/vasp.out
-#SBATCH --error=../hpg_outputs/vasp.err
+#SBATCH --job-name=DTE_CTGAN
+#SBATCH --output=/blue/dream_team/CT_GAN_TEAM/DTE_CTGAN/hpg_outputs/vasp.out
+#SBATCH --error=/blue/dream_team/CT_GAN_TEAM/DTE_CTGAN/hpg_outputs/vasp.err
 #SBATCH --account=dream_team
 #SBATCH --qos=dream_team
 #SBATCH --mail-type=END,FAIL
@@ -13,10 +13,11 @@
 #SBATCH --distribution=cyclic:cyclic
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:a100:1
-#SBATCH --mem-per-gpu=250000
+#SBATCH --mem-per-gpu=255000
 #SBATCH --time=72:00:00
 
-cd /blue/dream_team/CT_GAN_TEAM/DTE_CTGAN # Change to your working directory
+# Change vasp paths above and change to your working directory below
+cd /blue/dream_team/CT_GAN_TEAM/DTE_CTGAN 
 
 # Unload all modules
 module purge
@@ -53,7 +54,7 @@ python3.8 -c "import tensorflow as tf; print('TensorFlow version:', tf.__version
 cd src
 
 # Run your script
-python3.8 main.py --nE=50 --iteration_path="Iteration_13/" --model_path="pggan/" --bs=16 --disc_extra_steps=1 --latent=512
-# python3.8 main.py --nE=1000 --iteration_path="Iteration_11/" --model_path="dcgan/" --disc_extra_steps=1
-# python3.8 main.py --nE=1500 --iteration_path="Iteration_11/" --model_path="wgan/" --bs=64 --disc_extra_steps=5 
-# python3.8 main.py --nE=150 --iteration_path="Iteration_11/" --model_path="vae/" --bs=64
+# python3.8 main.py --nE=50 --iteration_path="Iteration_14/" --model_path="pggan/" --bs=8 --disc_extra_steps=1 --latent=512
+python3.8 main.py --nE=1000 --iteration_path="Iteration_12/" --model_path="dcgan/" --disc_extra_steps=1
+python3.8 main.py --nE=1500 --iteration_path="Iteration_12/" --model_path="wgan/" --bs=64 --disc_extra_steps=5 
+python3.8 main.py --nE=150 --iteration_path="Iteration_12/" --model_path="vae/" --bs=64

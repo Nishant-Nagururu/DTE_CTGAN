@@ -90,7 +90,7 @@ Once set up, the repository structure should look like this:
 - **NumPy, Matplotlib, Pillow**  
 - **TensorFlow-GAN, TensorFlow-Hub** (for Inception-based FID)  
 
-If you are running on an HPC, make sure to load the required modules (CUDA, Python, etc.). The provided `run.shh` Slurm script handles the environment setup on many HPC systems (e.g., UF HiPerGator).
+If you are running on an HPC, make sure to load the required modules (CUDA, Python, etc.). The provided `run.sh` Slurm script handles the environment setup on many HPC systems (e.g., UF HiPerGator).
 
 ---
 
@@ -143,7 +143,7 @@ Below are some essential flags you can pass:
 3. **Training**:  
    - Data is split into **Healthy** and **COVID** subsets.  
    - The model trains on **Healthy** images first, then **COVID**.  
-   - Each epoch can trigger a callback that saves model weights, generates sample images, and logs losses.
+   - Each epoch triggers a callback that saves model weights, generates sample images, and logs losses.
 
 4. **Evaluation**:  
    - **FID** and **LPIPS** measure similarity between real and generated images.  

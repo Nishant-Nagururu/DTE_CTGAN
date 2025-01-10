@@ -50,7 +50,7 @@ class AbstractModel(ABC):
 
         return train_image_paths, test_image_paths
 
-    def load_and_vectorize_images(image_paths, avg_dimensions, color = 'L'):
+    def load_and_vectorize_images(self, image_paths, avg_dimensions, color = 'L'):
         images = []
         for image_path in image_paths:
             img = Image.open(image_path)
@@ -138,7 +138,7 @@ class GANModel(AbstractModel):
         self.steps_per_epoch = len(train_images) // self.batch_size
         self.steps = self.steps_per_epoch * self.epochs
         self.evaluate_images_num = len(train_images) // 2
-        
+
         if len(train_images) == 0:
             raise ValueError("Training dataset is empty. Check your data paths and preprocessing.")
 
