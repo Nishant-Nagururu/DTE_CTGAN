@@ -162,7 +162,8 @@ Below are some essential flags you can pass:
   ```
 - Evaluation logs are stored in:
   ```
-  ./evaluate/
+  ./Outputs
+  └── evaluate/
   ```
 - Metrics such as **FID** and **LPIPS** and classification accuracy are printed and recorded in `evaluation.txt`.
 
