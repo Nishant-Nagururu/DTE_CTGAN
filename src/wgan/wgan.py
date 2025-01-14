@@ -4,6 +4,22 @@ import tensorflow as tf
 from keras import layers
 from abstract.model import GANModel
 
+"""
+This implementation of WGAN-GP was adapted from the example provided by Keras:
+https://keras.io/examples/generative/wgan_gp/
+
+Original authors: Aakash Kumar Nain
+Date accessed: 01-14-2025
+
+If you use this code in your research or projects, please consider citing the source:
+@misc{keras_wgangp,
+  author = {Aakash Kumar Nain},
+  title = {WGAN-GP Example},
+  year = {2021},
+  howpublished = {\url{https://keras.io/examples/generative/wgan_gp/}},
+  note = {Accessed: 2024-01-14}
+}
+"""
 
 class WGAN(GANModel):
     def __init__(self, params: dict):

@@ -3,6 +3,23 @@ import tensorflow as tf
 from keras import layers
 from abstract.model import GANModel
 
+"""
+This code was adapted from the COVID-19 Affected Lung CT Generative Network implementation,
+specifically the file COVID_GAN.py in the repository:
+https://github.com/jcgubbi/COVID-19-Affected-Lung-CT-Generative-Network/blob/master/COVID_GAN.py
+
+Original author: Jivan Gubbi (jcgubbi)
+Date Accessed: 01-14-2025
+
+If you use this code in your research or projects, please consider citing the source:
+@misc{COVIDGAN,
+  author = {Jivan Gubbi},
+  title = {COVID-19 Affected Lung CT Generative Network},
+  howpublished = {\url{https://github.com/jcgubbi/COVID-19-Affected-Lung-CT-Generative-Network/blob/master/COVID_GAN.py}},
+  note = {Accessed: 2025-01-14}
+}
+"""
+
 class DCGAN(GANModel):
     def __init__(self, params: dict):
         super().__init__(params)

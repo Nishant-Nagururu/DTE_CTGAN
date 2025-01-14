@@ -9,6 +9,21 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from tensorflow.keras.models import load_model
 
+"""
+This code was adapted from the VAE implementation found on Kaggle:
+https://www.kaggle.com/code/susanta21/vae-implementation
+
+Original authors: Susanta Baidya
+Date accessed: 01-14-2025
+
+If you use this code in your research or projects, please consider citing the source:
+@misc{kaggle_vae,
+  author = {Susanta Baidya},
+  title = {VAE Implementation},
+  howpublished = {\url{https://www.kaggle.com/code/susanta21/vae-implementation}},
+  note = {Accessed: 2025-01-14}
+}
+"""
 
 @tf.keras.utils.register_keras_serializable()
 class Sampling(tf.keras.layers.Layer):
@@ -85,35 +100,6 @@ class VAE(AbstractModel):
         
         decoder = tf.keras.Model(latent_inputs, outputs, name='decoder')
         return decoder
-
-    # VAE model assembly using encoder, decoder, and sampling
-    # def create_model(self):
-    #     def sampling(args):
-    #         z_mean, z_log_var = args
-    #         batch = tf.shape(z_mean)[0]
-    #         dim = tf.shape(z_mean)[1]
-    #         epsilon = tf.random.normal(shape=(batch, dim))
-    #         return z_mean + tf.exp(0.5 * z_log_var) * epsilon
-        
-    #     encoder = self.build_encoder()
-    #     decoder = self.build_decoder()
-        
-    #     # Define the VAE model
-    #     inputs = tf.keras.layers.Input(shape=self.image_size)
-        
-    #     # Encode input to latent space
-    #     z_mean, z_log_var = encoder(inputs)
-        
-    #     # Apply reparameterization trick
-    #     z = tf.keras.layers.Lambda(sampling)([z_mean, z_log_var])
-        
-    #     # Decode back to original image
-    #     reconstructed = decoder(z)
-        
-    #     # Define the complete VAE model
-    #     vae = tf.keras.Model(inputs, reconstructed, name='vae')
-        
-    #     return vae
 
     def create_model(self):
         encoder = self.build_encoder()

@@ -169,5 +169,12 @@ Below are some essential flags you can pass:
 
 ---
 
+## Acknowledgements
+
+All of the GAN code was heavily inspired by or directly adapted from various online sources and code repositories. Please refer to the citations in dcgan.py, pggan.py, vae.py, and wgan.py.
+
+---
 
 Thank you for using **CTGAN**! If you find this work helpful, please consider giving this repository a ⭐. If you have any issues or questions, feel free to contact me at nishant.nagururu@ufl.edu
+
+

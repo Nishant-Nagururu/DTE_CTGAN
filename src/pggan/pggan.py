@@ -16,6 +16,22 @@ from PIL import Image
 import os
 from abstract.model import GANModel
 
+"""
+This code was adapted from this PGGAN tensorflow implementation found on GitHub:
+https://github.com/fabulousjeong/pggan-tensorflow
+
+Original authors: Moonhwan Jeong (fabulousjeong)
+Date accessed: 01-14-2025
+
+If you use this code in your research or projects, please consider citing the source:
+@misc{github_pggan,
+  author = {Moonhwan Jeong},
+  title = {pggan-tensorflow},
+  howpublished = {\url{https://github.com/fabulousjeong/pggan-tensorflow?tab=readme-ov-file}},
+  note = {Accessed: 2025-01-14}
+}
+"""
+
 @tf.keras.utils.register_keras_serializable()
 class PixelNormalization(Layer):
     def __init__(self, **kwargs):
